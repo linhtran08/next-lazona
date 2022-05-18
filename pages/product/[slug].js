@@ -8,7 +8,7 @@ import db from "../../utility/db";
 import Product from "../../models/Product";
 import axios from "axios";
 import {Store} from "../../utility/Store";
-import Router, {useRouter} from "next/router";
+import {useRouter} from "next/router";
 
 const ProductScreen = (props) => {
 	const router = useRouter()
