@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import createEmotionCache from '../utility/createEmotionCache';
 import '../styles/globals.css';
 import {StoreProvider} from "../utility/Store";
+import {SnackbarProvider} from "notistack";
 
 const clientSideEmotionCache = createEmotionCache();
 
@@ -10,9 +11,11 @@ const MyApp = (props) => {
   const {Component = clientSideEmotionCache, pageProps} = props;
 
   return (
-      <StoreProvider>
-        <Component {...pageProps} />
-      </StoreProvider>
+		<SnackbarProvider anchorOrigin={{vertical: 'top', horizontal: 'center'}}>
+			<StoreProvider>
+				<Component {...pageProps} />
+			</StoreProvider>
+		</SnackbarProvider>
   );
 };
 

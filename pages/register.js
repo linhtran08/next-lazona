@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useContext, useEffect} from 'react';
 import Layout from "../components/Layout";
 import {Button, FormControl, Link, List, ListItem, TextField, Typography} from "@mui/material";
 import useStyles from "../utility/styles";
@@ -7,10 +7,14 @@ import axios from "axios";
 import {Store} from "../utility/Store";
 import {useRouter} from "next/router";
 import Cookies from "js-cookie";
+import {Controller, useForm} from "react-hook-form";
+import {useSnackbar} from "notistack";
 
 const Register = () => {
 	const { state, dispatch } = useContext(Store)
 	const { userInfo } = state
+	const {handleSubmit, control, formState: {errors}} = useForm()
+	const { enqueueSnackbar, closeSnackbar } = useSnackbar()
 	const router = useRouter()
 	const { redirect } = router.query
 	useEffect(() => {
@@ -20,14 +24,10 @@ const Register = () => {
 	}, []);
 
 	const classes = useStyles
-	const [name, setName] = useState('')
-	const [email, setEmail] = useState('')
-	const [password, setPass] = useState('')
-	const [confpassword, setConfPass] = useState('')
-	const submitHandle = async (e)=>{
-		e.preventDefault()
-		if (password !== confpassword){
-			alert("Password don't match")
+	const submitHandle = async ({name, email, password, confirmPassword})=>{
+		closeSnackbar()
+		if (password !== confirmPassword){
+			enqueueSnackbar("Password dont't match", {variant: 'error'})
 			return
 		}
 		try{
@@ -35,14 +35,17 @@ const Register = () => {
 				name,
 				email,
 				password,
-				confirmPassword : confpassword
+				confirmPassword
 			})
 			dispatch({type:'USER_LOGIN', payload: data})
 			Cookies.set('userInfo',JSON.stringify(data))
 			router.push(redirect || '/')
-			alert('login susscess')
+			enqueueSnackbar("Register Account Success", {variant: 'success'})
 		}catch (err){
-			alert(err.response.data? err.response.data.message : err.message)
+			enqueueSnackbar(
+				err.response.data ? err.response.data.message : err.message,
+				{variant: 'error'}
+			)
 		}
 	}
 	return (
@@ -50,57 +53,138 @@ const Register = () => {
 			<FormControl
 				component={"form"}
 				sx={[classes.form, {display: 'flex'}]}
-				onSubmit={submitHandle}
+				onSubmit={handleSubmit(submitHandle)}
 			>
 				<Typography component={"h1"} variant={"h1"}>
 					Register
 				</Typography>
 				<List>
 					<ListItem>
-						<TextField
-							variant={"outlined"}
-							fullWidth={true}
-							id={"name"}
-							label={"Name"}
-							inputProps={{type: 'text'}}
-							onChange={(e)=> setName(e.target.value)}
-						></TextField>
+						<Controller
+							render={({field})=>(
+							<TextField
+								variant={"outlined"}
+								fullWidth={true}
+								id={"name"}
+								label={"Name"}
+								inputProps={{type: 'text'}}
+								error={Boolean(errors.name)}
+								helperText={
+									errors.name
+										? errors.name.type === 'minLength'
+											? 'Name length is more than 1'
+											: 'Name is required'
+										: ''
+								}
+								{...field}
+							></TextField>
+						)}
+							name="name"
+							control={control}
+							defaultValue=""
+							rules={{
+								required: true,
+								minLength: 2
+							}}
+						>
+						</Controller>
 					</ListItem>
 					<ListItem>
-						<TextField
-							variant={"outlined"}
-							fullWidth={true}
-							id={"email"}
-							label={"Email"}
-							inputProps={{type: 'email'}}
-							onChange={(e)=> setEmail(e.target.value)}
-						></TextField>
+						<Controller
+							name="email"
+							control={control}
+							defaultValue=""
+							rules={{
+								required: true,
+								pattern: {
+									value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+								},
+							}}
+							render={({field}) => (
+								<TextField
+									variant={"outlined"}
+									fullWidth={true}
+									id={"email"}
+									label={"Email"}
+									inputProps={{type: 'email'}}
+									error={Boolean(errors.email)}
+									helperText={
+										errors.email
+											? errors.email.type === 'pattern'
+												? 'Email is not valid'
+												: 'Email is required'
+											: ''
+									}
+									{...field}
+								></TextField>
+							)}
+						>
+						</Controller>
 					</ListItem>
 					<ListItem>
-						<TextField
-							variant={"outlined"}
-							fullWidth={true}
-							id={"password"}
-							label={"Password"}
-							inputProps={{type: 'password'}}
-							onChange={ event => setPass(event.target.value)}
-						></TextField>
+						<Controller
+							name="password"
+							control={control}
+							defaultValue=""
+							rules={{
+								required: true,
+								minLength: 6
+							}}
+							render={({field}) => (
+								<TextField
+									variant={"outlined"}
+									fullWidth={true}
+									id={"password"}
+									label={"Password"}
+									inputProps={{type: 'password'}}
+									error={Boolean(errors.password)}
+									helperText={
+										errors.password
+											? errors.password.type === 'minLength'
+												? 'Password length is more than 5'
+												: 'password is required'
+											: ''
+									}
+									{... field}
+								></TextField>
+							)}
+						>
+						</Controller>
 					</ListItem>
 					<ListItem>
-						<TextField
-							variant={"outlined"}
-							fullWidth={true}
-							id={"confirmPassword"}
-							label={"Confirm Password"}
-							inputProps={{type: 'password'}}
-							onChange={ event => setConfPass(event.target.value)}
-						></TextField>
+						<Controller
+							render={({field}) => (
+								<TextField
+									variant={"outlined"}
+									fullWidth={true}
+									id={"confirmPassword"}
+									label={"Confirm Password"}
+									error={Boolean(errors.confirmPassword)}
+									inputProps={{type: 'password'}}
+									helperText={
+										errors.confirmPassword
+											? errors.confirmPassword.type === 'minLength'
+												? 'Confirm Password length is more than 5'
+												: 'Confirm Password is required'
+											: ''
+									}
+									{...field}
+								></TextField>
+							)}
+							name="confirmPassword"
+							control={control}
+							defaultValue=""
+							rules={{
+								required: true,
+								minLength: 6
+							}}
+						></Controller>
 					</ListItem>
 					<ListItem>
 						<Button variant={"contained"} type={"submit"} fullWidth={true} color={"primary"}>Register</Button>
 					</ListItem>
 					<ListItem>
-						Already have an account ?&nbsp;<NextLink href={`/login?redirect=${redirect || '/'}`} passHref={true} ><Link>Register</Link></NextLink>
+						Already have an account ?&nbsp;<NextLink href={`/login?redirect=${redirect || '/'}`} passHref={true} ><Link>Login</Link></NextLink>
 					</ListItem>
 				</List>
 			</FormControl>

@@ -38,6 +38,24 @@ const Layout = ({children, title, desc}) => {
 		dispatch({type: 'CART_FIRST', payload: first})
 	}, [])
 
+	useEffect(() => {
+		return () => {
+			if (Cookies.get('userInfo')) {
+				dispatch({type: 'USER_LOGIN' , payload: JSON.parse(Cookies.get('userInfo'))})
+			}
+		};
+	}, []);
+
+	useEffect(() => {
+		return () => {
+			if(Cookies.get('shippingAddress')){
+				dispatch({type: 'SAVE_SHIPPING_ADDRESS', payload: JSON.parse(Cookies.get('shippingAddress'))})
+			}
+		};
+	}, []);
+
+
+	
 	const theme = createTheme({
 		typography: {
 			h1: {
@@ -100,7 +118,7 @@ const Layout = ({children, title, desc}) => {
 							<div>
 								<Switch checked={darkMode} onChange={handleMode}/>
 								<NextLink href="/cart" passHref>
-									<Link>
+									<Link sx={{marginRight: 2}}>
 										{cart.cartItems.length > 0 ? (
 												<Badge
 													color={"secondary"}

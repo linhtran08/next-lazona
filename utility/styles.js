@@ -1,11 +1,10 @@
 
 const useStyles = {
   navbar: {
+		px: 10,
     backgroundColor: "#203040",
     '& a': {
       color: '#fff',
-      marginLeft: 10,
-
     }
   },
   brand:{
@@ -23,6 +22,7 @@ const useStyles = {
     marginBottom: '20px',
   },
   footer:{
+		my: 5,
     textAlign: 'center',
   },
   fontBold:{
