@@ -5,10 +5,12 @@ export const Store = createContext()
 const initialState = {
   darkMode : false,
 	cart: {
-		cartItems: [],
-		shippingAddress: {}
+		cartItems: Cookies.get('cartItems') ? JSON.parse(Cookies.get('cartItems')) : [],
+		shippingAddress: Cookies.get('shippingAddress') ? JSON.parse('shippingAddress') : {}
 	},
-	userInfo: null
+	userInfo: Cookies.get('userInfo')
+						? JSON.parse(Cookies.get('userinfo'))
+						: null
 }
 
 function reducer(state, action){
