@@ -20,7 +20,6 @@ const ProductScreen = (props) => {
   }
 
 	const addToCartHandle = async () => {
-		// eslint-disable-next-line react-hooks/rules-of-hooks
 		const {data} = await axios.get(`/api/products/${product._id}`)
     const existItem = state.cart.cartItems.find(x => x._id === product._id)
 		const quantity = existItem ? existItem.quantity+1 : 1
