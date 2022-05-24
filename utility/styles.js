@@ -37,6 +37,9 @@ const useStyles = {
 	navbarButton:{
 		color: '#fff',
 		textTransform: 'initial'
+	},
+	error:{
+	color: '#f00400'
 	}
 }
 export default useStyles
