@@ -14,7 +14,7 @@ import Cookies from "js-cookie";
 import {useSnackbar} from "notistack";
 import {getError} from "../utility/errors";
 
-function Profile(props) {
+function Profile() {
 	const router = useRouter()
 	const {state, dispatch} = useContext(Store)
 	const {userInfo} = state

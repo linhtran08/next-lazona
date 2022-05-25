@@ -36,7 +36,7 @@ function reducer(state, action) {
 	}
 }
 
-function OrderHistory(props) {
+function OrderHistory() {
 	const router = useRouter()
 	const {state} = useContext(Store)
 	const {userInfo} = state
