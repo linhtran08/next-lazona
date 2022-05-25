@@ -91,8 +91,11 @@ const Layout = ({children, title, desc}) => {
 	const loginClickHandle = (e) =>{
 		setAnchorEl(e.currentTarget)
 	}
-	const loginMenuCloseHandler = ()=>{
+	const loginMenuCloseHandler = (e, redirect)=>{
 		setAnchorEl(null)
+		if(redirect){
+			router.push(redirect)
+		}
 	}
 	const logoutMenuCloseHandler = ()=>{
 		setAnchorEl(null)
@@ -107,7 +110,7 @@ const Layout = ({children, title, desc}) => {
 			</Head>
 			<ThemeProvider theme={theme}>
 				<CssBaseline>
-					<AppBar position="static" sx={classes.navbar}>
+					<AppBar position="static" sx={[classes.navbar,{padding: "unset"}]}>
 						<Toolbar>
 							<NextLink href="/" passHref>
 								<Link>
@@ -145,8 +148,8 @@ const Layout = ({children, title, desc}) => {
 											keepMounted
 											open={Boolean(anchorEl)}
 											onClose={loginMenuCloseHandler}>
-											<MenuItem onClick={loginMenuCloseHandler}>Profile</MenuItem>
-											<MenuItem onClick={loginMenuCloseHandler}>My account</MenuItem>
+											<MenuItem onClick={(e) => loginMenuCloseHandler(e,'/profile')}>Profile</MenuItem>
+											<MenuItem onClick={(e) => loginMenuCloseHandler(e,'/order-history')}>Order History</MenuItem>
 											<MenuItem onClick={logoutMenuCloseHandler}>Logout</MenuItem>
 										</Menu>
 									</>
